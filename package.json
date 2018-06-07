@@ -1,0 +1,23 @@
+{
+  "name": "exchange",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src",
+    "clean-data": "rm ./data/*.json",
+    "test": "standard"
+  },
+  "keywords": [],
+  "author": "José Fresco <josemariafresco@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bitfinex-api-node": "^1.2.1",
+    "debug": "^3.1.0",
+    "kraken-api": "^1.0.0",
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  }
+}
