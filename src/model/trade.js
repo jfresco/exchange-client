@@ -1,4 +1,4 @@
-const { sortBy, slice, last, dropRight } = require('lodash')
+const { reverse, sortBy, slice, last, dropRight } = require('lodash')
 
 module.exports = function Trade (orderBooks) {
   // Unified order book: contains all asks and bits of all the exchanges
@@ -28,7 +28,7 @@ module.exports = function Trade (orderBooks) {
   function sellByAmount(expectedVolume) {
     // Get working orders
     function getBestBids() {
-      const bids = sortBy(unified.bids, '-price')
+      const bids = reverse(sortBy(unified.bids, 'price'))
 
       let accum = 0
       let i = 0
