@@ -18,22 +18,14 @@ function Orders (items: Order[], depthFilter: DepthFilterFunction): OrderInfo {
   }
 }
 
-function Asks (asks: Ask[]): OrderInfo {
-  return Orders(asks, price => order => order.price <= price)
-}
-
-function Bids (bids: Bid[]): OrderInfo {
-  return Orders(bids, price => order => order.price >= price)
-}
-
 export function OrderBook ({ asks, bids }: { asks: Ask[], bids: Bid[] }): OrderBook {
   const highestBid = last(sortBy(map(bids, 'price'))) || 0
   const lowestAsk = first(sortBy(map(asks, 'price'))) || 0
   const spread = highestBid - lowestAsk
 
   return {
-    asks: Asks(asks),
-    bids: Bids(bids),
+    asks: Orders(asks, price => order => order.price <= price),
+    bids: Orders(bids, price => order => order.price >= price),
     highestBid,
     lowestAsk,
     spread
