@@ -1,3 +1,5 @@
+const { first, last, sortBy, map } = require('lodash')
+
 function Order ({ volume, price }) {
   return {
     volume,
@@ -35,25 +37,9 @@ function Bids (bids) {
   return Orders(bids, price => order => order.price >= price)
 }
 
-function by (property, order = 'asc') {
-  return function (a, b) {
-    const index = order === 'asc' ? 1 : -1
-
-    if (a[property] === b[property]) {
-      return 0
-    }
-
-    if (a[property] < b[property]) {
-      return -index
-    }
-
-    return index
-  }
-}
-
 function OrderBook ({ asks, bids }) {
-  const highestBid = [...bids].sort(by('price', 'desc'))[0].price
-  const lowestAsk = [...asks].sort(by('price', 'asc'))[0].price
+  const highestBid = last(sortBy(map(bids, 'price')))
+  const lowestAsk = first(sortBy(map(asks, 'price')))
   const spread = highestBid - lowestAsk
 
   return {
