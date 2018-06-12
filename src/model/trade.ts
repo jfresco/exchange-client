@@ -1,4 +1,4 @@
-import { sortBy, slice, last, dropRight } from 'lodash'
+import { sortBy, slice, last, dropRight, reverse } from 'lodash'
 
 export default function Trade (orderBooks: OrderBooksByExchanges) {
   // Unified order book: contains all asks and bits of all the exchanges
@@ -28,7 +28,7 @@ export default function Trade (orderBooks: OrderBooksByExchanges) {
   function sellByAmount(expectedVolume: number) {
     // Get working orders
     function getBestBids() {
-      const bids = sortBy(unified.bids, '-price')
+      const bids = reverse(sortBy(unified.bids, 'price'))
 
       let accum = 0
       let i = 0
