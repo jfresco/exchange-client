@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "target": "es2017",
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "lib": [
+      "es2015",
+      "es2018"
+    ],
+    "outDir": "build"
   }
 }
