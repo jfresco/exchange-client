@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "target": "es2017",
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  }
+}
