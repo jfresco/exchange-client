@@ -1,14 +1,14 @@
-const { reverse, sortBy, slice, last, dropRight } = require('lodash')
+import { sortBy, slice, last, dropRight, reverse } from 'lodash'
 
-module.exports = function Trade (orderBooks) {
+export default function Trade (orderBooks: OrderBooksByExchanges) {
   // Unified order book: contains all asks and bits of all the exchanges
-  const unified = {
+  const unified: Unified = {
     asks: [],
     bids: []
   }
 
   Object.keys(orderBooks).forEach(exchange => {
-    const withExchange = order => ({
+    const withExchange = (order: Order): OrderWithExchange => ({
       ...order,
       exchange
     })
@@ -25,28 +25,37 @@ module.exports = function Trade (orderBooks) {
   })
 
   // Get the orders needed to sell the base currency in order to get the `expectedVolume`
-  function sellByAmount(expectedVolume) {
+  function sellByAmount(expectedVolume: number) {
+
+    // Get the index of the last item that, with its predecessors, accumulates at least the `expectedVolume`
+    function getIndexForAccum(bids: OrderWithExchange[]) {
+      let i = 0
+
+      for (let accum = 0; accum < expectedVolume && i < bids.length; i++) {
+        const ask = bids[i]
+        accum += ask.price * ask.volume
+      }
+
+      return i
+    }
+
     // Get working orders
     function getBestBids() {
       const bids = reverse(sortBy(unified.bids, 'price'))
-
-      let accum = 0
-      let i = 0
-      while (accum < expectedVolume && i < bids.length) {
-        const ask = bids[i]
-        accum += ask.price * ask.volume
-        i++
-      }
-
-      return slice(bids, 0, i)
+      const index = getIndexForAccum(bids)
+      return slice(bids, 0, index)
     }
 
-    function applyCorrectionToLastBid(orders) {
+    function applyCorrectionToLastBid(orders: OrderWithExchange[]) {
       // A correction should be made to the last item of the array, assuming that the sum is passed from
       // `expectedVolume`.
       // XXX: I'm assuming here that the amount to sell to a bidder can be altered
       const untouched = dropRight(orders)
       const lastBid = last(orders)
+
+      if (!lastBid) {
+        return []
+      }
 
       // Get the sum of all the orders except the last
       const sum = untouched.reduce((accum, x) => accum + x.volume * x.price, 0)
