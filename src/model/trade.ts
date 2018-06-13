@@ -26,19 +26,24 @@ export default function Trade (orderBooks: OrderBooksByExchanges) {
 
   // Get the orders needed to sell the base currency in order to get the `expectedVolume`
   function sellByAmount(expectedVolume: number) {
+
+    // Get the index of the last item that, with its predecessors, accumulates at least the `expectedVolume`
+    function getIndexForAccum(bids: OrderWithExchange[]) {
+      let i = 0
+
+      for (let accum = 0; accum < expectedVolume && i < bids.length; i++) {
+        const ask = bids[i]
+        accum += ask.price * ask.volume
+      }
+
+      return i
+    }
+
     // Get working orders
     function getBestBids() {
       const bids = reverse(sortBy(unified.bids, 'price'))
-
-      let accum = 0
-      let i = 0
-      while (accum < expectedVolume && i < bids.length) {
-        const ask = bids[i]
-        accum += ask.price * ask.volume
-        i++
-      }
-
-      return slice(bids, 0, i)
+      const index = getIndexForAccum(bids)
+      return slice(bids, 0, index)
     }
 
     function applyCorrectionToLastBid(orders: OrderWithExchange[]) {
